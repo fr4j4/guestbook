@@ -1,0 +1,10 @@
+easy_admin:
+  entities:
+    Conferences:
+      class: App\Entity\Conference
+      new:
+        fields: ['city','year','isInternationial','sa']
+    Comments:
+      class: App\Entity\Comment
+      new:
+        fields: ['author','text','photoFileName']
