@@ -6,21 +6,23 @@
 			<div>There are <b>{{comments|length}}</b> comments.</div>
 			{% for comment in comments %}
 				{% if comment.photofilename %}
-					<img src="{{comment.photofilename}}"/>
+					<img alt="photo" src="{{ asset('uploads/photos/' ~ comment.photofilename)}}"/>
 				{% endif %}
-				<h4>{{ comment.author }}</h4>
+				<h4>{{ comment.author }} - {{ comment.email }}</h4>
 				<small>
 					{{ comment.createdAt|format_datetime('medium', 'short') }}
 				</small>
 				<p>{{ comment.text }}</p>
 			{% endfor %}
 			{% if previous >= 0 %}
-				<a href="{{path('conference',{id: conference.id, offset: previous})}}">Previous</a>
+				<a href="{{path('conference',{slug: conference.slug, offset: previous})}}">Previous</a>
 			{% endif %}
 			{% if next < comments|length %}
-				<a href="{{path('conference',{id: conference.id, offset: next})}}">Next</a>
+				<a href="{{path('conference',{slug: conference.slug, offset: next})}}">Next</a>
 			{% endif %}
 		{% else %}
 			<div>No comments have been posted yet for this conference.</div>
 		{% endif %}
+		<h2>Add your own feedback</h2>
+		{{ form(comment_form) }}
 	{% endblock %}

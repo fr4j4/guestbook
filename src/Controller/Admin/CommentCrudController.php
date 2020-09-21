@@ -20,10 +20,11 @@ class CommentCrudController extends AbstractCrudController
 	{
 		return [
 			Field::new('author'),
+            Field::new('email'),
 			Field::new('photoFileName'),
 			Field::new('text'),
-			DateField::new('createdAt'),
-			Field::new('photoFileName'),
+			DateField::new('createdAt')->onlyOnIndex(),
+            Field::new('photoFileName'),
 			AssociationField::new('conference')
 				->autocomplete(),
 		];

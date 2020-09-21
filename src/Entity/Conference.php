@@ -6,9 +6,12 @@ use App\Repository\ConferenceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
  * @ORM\Entity(repositoryClass=ConferenceRepository::class)
+ * @UniqueEntity("slug")
  */
 class Conference
 {
@@ -39,89 +42,113 @@ class Conference
 	 */
 	private $comments;
 
+    /**
+     * @ORM\Column(type="string", length=255, unique=true)
+     */
+    private $slug;
+
 	public function __construct()
-	{
-		$this->comments = new ArrayCollection();
-	}
+         	{
+         		$this->comments = new ArrayCollection();
+         	}
 
 	public function getId(): ?int
-	{
-		return $this->id;
-	}
+         	{
+         		return $this->id;
+         	}
+
+    public function computeSlug(SluggerInterface $slugger)
+    {
+        if (!$this->slug || '-' === $this->slug) {
+            $this->slug = (string) $slugger->slug((string) $this)->lower();
+        }
+    }
 
 	public function getCity(): ?string
-	{
-		return $this->city;
-	}
+         	{
+         		return $this->city;
+         	}
 
 	public function setCity(string $city): self
-	{
-		$this->city = $city;
-
-		return $this;
-	}
+         	{
+         		$this->city = $city;
+         
+         		return $this;
+         	}
 
 	public function getYear(): ?string
-	{
-		return $this->year;
-	}
+         	{
+         		return $this->year;
+         	}
 
 	public function setYear(string $year): self
-	{
-		$this->year = $year;
-
-		return $this;
-	}
+         	{
+         		$this->year = $year;
+         
+         		return $this;
+         	}
 
 	public function getIsInternational(): ?bool
-	{
-		return $this->isInternational;
-	}
+         	{
+         		return $this->isInternational;
+         	}
 
 	public function setIsInternational(bool $isInternational): self
-	{
-		$this->isInternational = $isInternational;
-
-		return $this;
-	}
+         	{
+         		$this->isInternational = $isInternational;
+         
+         		return $this;
+         	}
 
 	/**
 	 * @return Collection|Comment[]
 	 */
 	public function getComments(): Collection
-	{
-		return $this->comments;
-	}
+         	{
+         		return $this->comments;
+         	}
 
 	public function addComment(Comment $comment): self
-	{
-		if (!$this->comments->contains($comment)) {
-			$this->comments[] = $comment;
-			$comment->setConference($this);
-		}
-
-		return $this;
-	}
+         	{
+         		if (!$this->comments->contains($comment)) {
+         			$this->comments[] = $comment;
+         			$comment->setConference($this);
+         		}
+         
+         		return $this;
+         	}
 
 	public function removeComment(Comment $comment): self
-	{
-		if ($this->comments->contains($comment)) {
-			$this->comments->removeElement($comment);
-			// set the owning side to null (unless already changed)
-			if ($comment->getConference() === $this) {
-				$comment->setConference(null);
-			}
-		}
-
-		return $this;
-	}
+         	{
+         		if ($this->comments->contains($comment)) {
+         			$this->comments->removeElement($comment);
+         			// set the owning side to null (unless already changed)
+         			if ($comment->getConference() === $this) {
+         				$comment->setConference(null);
+         			}
+         		}
+         
+         		return $this;
+         	}
 
 	public function __toString(): string
-	{
-		return (string) $this->city.' '.$this->year;
-	}
+         	{
+         		return (string) $this->city.' '.$this->year;
+         	}
 
 	public function getCommentsCount(): int{
-		return count($this->getComments());
-	} 
+         		return count($this->getComments());
+         	}
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
+    } 
 }
